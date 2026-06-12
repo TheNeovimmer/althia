@@ -32,8 +32,8 @@
                 <p>I'm here to help you with any questions.</p>
             </div>
             <div class="ai-bar-input">
-                <input type="text" placeholder="Type your Questions ......." disabled>
-                <button class="btn-icon" disabled><i class="fas fa-paper-plane"></i></button>
+                <input type="text" id="heroChatInput" placeholder="Type your Questions ......." autocomplete="off">
+                <button class="btn-icon" id="heroChatBtn"><i class="fas fa-paper-plane"></i></button>
             </div>
         </div>
     </div>

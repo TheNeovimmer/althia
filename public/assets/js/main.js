@@ -323,6 +323,31 @@ document.addEventListener('DOMContentLoaded', () => {
                 sendMessage();
             }
         });
+
+        /* --- Hero AI Quick Chat --- */
+        const heroInput = document.getElementById('heroChatInput');
+        const heroBtn = document.getElementById('heroChatBtn');
+
+        const submitFromHero = () => {
+            const text = heroInput.value.trim();
+            if (!text) return;
+            chatPanel.style.display = 'flex';
+            chatBtn.querySelector('.chat-btn-icon').style.display = 'none';
+            chatBtn.querySelector('.chat-btn-close').style.display = 'flex';
+            chatInput.value = text;
+            heroInput.value = '';
+            sendMessage();
+        };
+
+        if (heroInput && heroBtn) {
+            heroBtn.addEventListener('click', submitFromHero);
+            heroInput.addEventListener('keydown', (e) => {
+                if (e.key === 'Enter') {
+                    e.preventDefault();
+                    submitFromHero();
+                }
+            });
+        }
     }
 
 });

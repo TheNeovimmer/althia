@@ -7,6 +7,13 @@ class OpenRouterService
     {
         $config = require __DIR__ . '/../../config/app.php';
         $apiKey = $config['openrouter_api_key'] ?: getenv('OPENROUTER_API_KEY');
+        if (empty($apiKey)) {
+            $envFile = __DIR__ . '/../../.env';
+            if (file_exists($envFile) && is_readable($envFile)) {
+                $env = parse_ini_file($envFile);
+                $apiKey = $env['OPENROUTER_API_KEY'] ?? '';
+            }
+        }
         $model = $config['openrouter_model'] ?? 'openai/gpt-oss-120b:free';
 
         if (empty($apiKey)) {
