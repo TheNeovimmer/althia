@@ -49,6 +49,10 @@ class HomeController extends Controller
     public function sendContact(): void
     {
         $body = $this->getBody();
+        if (!verify_csrf($body['_token'] ?? '')) {
+            $_SESSION['_flash']['error'] = 'Invalid request.';
+            $this->redirect('/contact'); return;
+        }
 
         $db = \App\Core\Database::getInstance();
         $db->insert(
@@ -58,6 +62,30 @@ class HomeController extends Controller
 
         $_SESSION['_flash']['success'] = 'Thank you for your message. We will get back to you shortly.';
         $this->redirect('/contact');
+    }
+
+    public function newsletter(): void
+    {
+        $body = $this->getBody();
+        if (!verify_csrf($body['_token'] ?? '')) {
+            $_SESSION['_flash']['error'] = 'Invalid request.';
+            $this->redirect('/'); return;
+        }
+
+        $email = $body['email'] ?? '';
+        if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
+            $_SESSION['_flash']['error'] = 'Invalid email address.';
+            $this->redirect('/'); return;
+        }
+
+        $db = \App\Core\Database::getInstance();
+        $existing = $db->fetch("SELECT id FROM subscribers WHERE email = ?", [$email]);
+        if (!$existing) {
+            $db->insert("INSERT INTO subscribers (email) VALUES (?)", [$email]);
+        }
+
+        $_SESSION['_flash']['success'] = 'Thank you for subscribing!';
+        $this->redirect('/');
     }
 
     public function pricing(): void

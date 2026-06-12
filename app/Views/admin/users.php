@@ -46,9 +46,12 @@
                                     <td><span class="apt-status <?= $u['is_active'] ? 'scheduled' : 'cancelled' ?>"><?= $u['is_active'] ? 'Active' : 'Inactive' ?></span></td>
                                     <td><?= date('M j, Y', strtotime($u['created_at'])) ?></td>
                                     <td class="actions-cell">
-                                        <a href="/admin/users/<?= $u['id'] ?>/toggle-status" class="btn btn-sm <?= $u['is_active'] ? 'btn-outline' : 'btn-primary' ?>">
-                                            <?= $u['is_active'] ? 'Deactivate' : 'Activate' ?>
-                                        </a>
+                                        <form method="POST" action="/admin/users/<?= $u['id'] ?>/toggle-status" style="display:inline">
+                                            <?= csrf_field() ?>
+                                            <button type="submit" class="btn btn-sm <?= $u['is_active'] ? 'btn-outline' : 'btn-primary' ?>">
+                                                <?= $u['is_active'] ? 'Deactivate' : 'Activate' ?>
+                                            </button>
+                                        </form>
                                     </td>
                                 </tr>
                             <?php endforeach; ?>

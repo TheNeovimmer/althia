@@ -3,6 +3,7 @@ namespace App\Services;
 
 use App\Models\Appointment;
 use App\Models\Doctor;
+use App\Models\User;
 
 class AppointmentService
 {
@@ -25,12 +26,19 @@ class AppointmentService
         }
 
         $date = $data['appointment_date'];
-        if (strtotime($date) <= strtotime(date('Y-m-d'))) {
-            $existing = Appointment::checkAvailability($data['doctor_id'], $date);
-            foreach ($existing as $slot) {
-                if ($slot['appointment_time'] === $data['appointment_time']) {
-                    return ['success' => false, 'errors' => ['This time slot is already booked']];
-                }
+
+        if (!strtotime($date)) {
+            return ['success' => false, 'errors' => ['Invalid date format']];
+        }
+
+        if (strtotime($date) < strtotime(date('Y-m-d'))) {
+            return ['success' => false, 'errors' => ['Cannot book appointments in the past']];
+        }
+
+        $existing = Appointment::checkAvailability($data['doctor_id'], $date);
+        foreach ($existing as $slot) {
+            if ($slot['appointment_time'] === $data['appointment_time']) {
+                return ['success' => false, 'errors' => ['This time slot is already booked']];
             }
         }
 
@@ -45,7 +53,7 @@ class AppointmentService
         ]);
 
         if (!empty($data['doctor_id'])) {
-            $doctorRec = \App\Models\Doctor::find($data['doctor_id']);
+            $doctorRec = Doctor::find($data['doctor_id']);
             if ($doctorRec && !empty($doctorRec['user_id'])) {
                 NotificationService::send(
                     $doctorRec['user_id'],
@@ -55,6 +63,28 @@ class AppointmentService
                     '/doctor/appointments'
                 );
             }
+        }
+
+        $admins = User::where('role', 'admin');
+        foreach ($admins as $admin) {
+            NotificationService::send(
+                $admin['id'],
+                'appointment',
+                'New Appointment Booking',
+                'A new appointment has been booked, pending your approval.',
+                '/admin/appointments?status=pending'
+            );
+        }
+
+        $patient = \App\Models\Patient::find($data['patient_id']);
+        if ($patient && !empty($patient['user_id'])) {
+            NotificationService::send(
+                $patient['user_id'],
+                'appointment',
+                'Appointment Booked',
+                'Your appointment has been submitted and is pending admin approval.',
+                '/patient/appointments'
+            );
         }
 
         return ['success' => true, 'id' => $id];
@@ -71,18 +101,59 @@ class AppointmentService
             'cancellation_reason' => $reason,
         ]);
 
+        $patient = \App\Models\Patient::find($appointment['patient_id']);
+        if ($patient && !empty($patient['user_id'])) {
+            NotificationService::send(
+                $patient['user_id'],
+                'appointment',
+                'Appointment Cancelled',
+                'Your appointment on ' . $appointment['appointment_date'] . ' has been cancelled.' . ($reason ? " Reason: $reason" : ''),
+                '/patient/appointments'
+            );
+        }
+
         return true;
     }
 
     public static function confirm(int $id): bool
     {
+        $apt = Appointment::find($id);
+        if (!$apt) return false;
+
         Appointment::update($id, ['status' => 'confirmed']);
+
+        $patient = \App\Models\Patient::find($apt['patient_id']);
+        if ($patient && !empty($patient['user_id'])) {
+            NotificationService::send(
+                $patient['user_id'],
+                'appointment',
+                'Appointment Confirmed',
+                'Your appointment on ' . $apt['appointment_date'] . ' has been confirmed.',
+                '/patient/appointments'
+            );
+        }
+
         return true;
     }
 
     public static function complete(int $id): bool
     {
+        $appointment = Appointment::find($id);
+        if (!$appointment) return false;
+
         Appointment::update($id, ['status' => 'completed']);
+
+        $patient = \App\Models\Patient::find($appointment['patient_id']);
+        if ($patient && !empty($patient['user_id'])) {
+            NotificationService::send(
+                $patient['user_id'],
+                'appointment',
+                'Appointment Completed',
+                'Your appointment on ' . $appointment['appointment_date'] . ' has been marked as completed.',
+                '/patient/appointments'
+            );
+        }
+
         return true;
     }
 

@@ -97,14 +97,21 @@
                         <div class="form-section-title">Change Password</div>
                         <form method="POST" action="/doctor/profile">
                             <?= csrf_field() ?>
+                            <input type="hidden" name="_action" value="change_password">
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label for="current_password" class="form-label"><i class="fas fa-lock"></i> Current Password</label>
+                                    <input type="password" id="current_password" name="current_password" class="form-input" required placeholder="Enter current password">
+                                </div>
+                            </div>
                             <div class="form-row">
                                 <div class="form-group">
                                     <label for="new_password" class="form-label"><i class="fas fa-lock"></i> New Password</label>
-                                    <input type="password" id="new_password" name="new_password" class="form-input" minlength="8" placeholder="Leave blank to keep current">
+                                    <input type="password" id="new_password" name="new_password" class="form-input" minlength="8" required placeholder="New password">
                                 </div>
                                 <div class="form-group">
                                     <label for="confirm_password" class="form-label"><i class="fas fa-lock"></i> Confirm Password</label>
-                                    <input type="password" id="confirm_password" name="confirm_password" class="form-input" minlength="8" placeholder="Confirm new password">
+                                    <input type="password" id="confirm_password" name="confirm_password" class="form-input" minlength="8" required placeholder="Confirm new password">
                                 </div>
                             </div>
                             <div class="form-actions">

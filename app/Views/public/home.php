@@ -521,8 +521,9 @@
             </div>
             <h2>Sign Up For Newsletter</h2>
             <p>Get the latest health tips, wellness insights, and Althia updates delivered straight to your inbox.</p>
-            <form class="newsletter-form-inline" action="/newsletter" method="POST" onsubmit="event.preventDefault();">
-                <input type="email" placeholder="Enter your email address" required>
+            <form class="newsletter-form-inline" action="/newsletter" method="POST">
+                <?= csrf_field() ?>
+                <input type="email" name="email" placeholder="Enter your email address" required>
                 <button type="submit">Subscribe <i class="fas fa-arrow-right"></i></button>
             </form>
             <p class="newsletter-disclaimer">We respect your privacy. Unsubscribe at any time.</p>

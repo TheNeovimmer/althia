@@ -50,9 +50,12 @@
                                     <td><span class="apt-status <?= $d['is_active'] ? 'scheduled' : 'cancelled' ?>"><?= $d['is_active'] ? 'Active' : 'Inactive' ?></span></td>
                                     <td class="actions-cell">
                                         <a href="/admin/doctors/<?= $d['id'] ?>/edit" class="btn btn-sm btn-outline"><i class="fas fa-edit"></i> Edit</a>
-                                        <a href="/admin/doctors/<?= $d['id'] ?>/toggle-status" class="btn btn-sm <?= $d['is_active'] ? 'btn-outline' : 'btn-primary' ?>">
-                                            <?= $d['is_active'] ? 'Deactivate' : 'Activate' ?>
-                                        </a>
+                                        <form method="POST" action="/admin/doctors/<?= $d['id'] ?>/toggle-status" style="display:inline">
+                                            <?= csrf_field() ?>
+                                            <button type="submit" class="btn btn-sm <?= $d['is_active'] ? 'btn-outline' : 'btn-primary' ?>">
+                                                <?= $d['is_active'] ? 'Deactivate' : 'Activate' ?>
+                                            </button>
+                                        </form>
                                     </td>
                                 </tr>
                             <?php endforeach; ?>

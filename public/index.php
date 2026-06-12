@@ -16,6 +16,7 @@ $router->get('/blog', 'BlogController@index');
 $router->get('/blog/{slug}', 'BlogController@show');
 $router->get('/contact', 'HomeController@contact');
 $router->post('/contact', 'HomeController@sendContact');
+$router->post('/newsletter', 'HomeController@newsletter');
 $router->get('/pricing', 'HomeController@pricing');
 
 // Auth routes
@@ -53,8 +54,8 @@ $router->get('/doctor/records/create', 'DoctorController@recordsForm', [Middlewa
 $router->get('/doctor/records/create/{id}', 'DoctorController@recordsForm', [Middleware::doctor()]);
 $router->post('/doctor/records/create', 'DoctorController@createReport', [Middleware::doctor()]);
 $router->get('/doctor/appointments', 'DoctorController@appointments', [Middleware::doctor()]);
-$router->get('/doctor/appointments/{id}/complete', 'DoctorController@completeAppointment', [Middleware::doctor()]);
-$router->get('/doctor/appointments/{id}/cancel', 'DoctorController@cancelAppointment', [Middleware::doctor()]);
+$router->post('/doctor/appointments/{id}/complete', 'DoctorController@completeAppointment', [Middleware::doctor()]);
+$router->post('/doctor/appointments/{id}/cancel', 'DoctorController@cancelAppointment', [Middleware::doctor()]);
 $router->post('/doctor/appointments/{id}/update', 'DoctorController@updateAppointment', [Middleware::doctor()]);
 
 // Admin routes
@@ -69,8 +70,8 @@ $router->post('/admin/doctors/create', 'AdminController@createDoctor', [Middlewa
 $router->get('/admin/doctors/{id}/edit', 'AdminController@editDoctorForm', [Middleware::admin()]);
 $router->post('/admin/doctors/{id}/edit', 'AdminController@updateDoctor', [Middleware::admin()]);
 $router->post('/admin/doctors/{id}/verify', 'AdminController@verifyDoctor', [Middleware::admin()]);
-$router->get('/admin/doctors/{id}/toggle-status', 'AdminController@toggleDoctorStatus', [Middleware::admin()]);
-$router->get('/admin/users/{id}/toggle-status', 'AdminController@toggleUserStatus', [Middleware::admin()]);
+$router->post('/admin/doctors/{id}/toggle-status', 'AdminController@toggleDoctorStatus', [Middleware::admin()]);
+$router->post('/admin/users/{id}/toggle-status', 'AdminController@toggleUserStatus', [Middleware::admin()]);
 $router->get('/admin/profile', 'AdminController@profile', [Middleware::admin()]);
 $router->post('/admin/profile', 'AdminController@profile', [Middleware::admin()]);
 
@@ -91,6 +92,15 @@ $router->post('/admin/contacts/{id}/mark-read', 'AdminController@markContactRead
 $router->post('/admin/contacts/{id}/delete', 'AdminController@deleteContact', [Middleware::admin()]);
 $router->get('/admin/notifications', 'AdminController@notifications', [Middleware::admin()]);
 $router->post('/admin/notifications/mark-all-read', 'AdminController@markAllNotificationsRead', [Middleware::admin()]);
+
+// Admin Specializations CRUD
+$router->get('/admin/specializations', 'AdminController@specializations', [Middleware::admin()]);
+$router->post('/admin/specializations', 'AdminController@specializations', [Middleware::admin()]);
+
+// Admin AI Settings
+$router->get('/admin/ai-settings', 'AdminController@aiSettings', [Middleware::admin()]);
+$router->post('/admin/ai-settings', 'AdminController@aiSettings', [Middleware::admin()]);
+$router->post('/admin/rag-documents', 'AdminController@ragDocuments', [Middleware::admin()]);
 
 // Doctor extra routes
 $router->get('/doctor/messages', 'DoctorController@messages', [Middleware::doctor()]);

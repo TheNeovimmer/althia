@@ -62,6 +62,8 @@
             ['label' => 'Blog',           'icon' => 'fa-blog',            'url' => '/admin/blog'],
             ['label' => 'Contacts',       'icon' => 'fa-envelope',        'url' => '/admin/contacts'],
             ['label' => 'Notifications',  'icon' => 'fa-bell',            'url' => '/admin/notifications'],
+            ['label' => 'Specializations','icon' => 'fa-stethoscope',     'url' => '/admin/specializations'],
+            ['label' => 'AI Settings',    'icon' => 'fa-robot',           'url' => '/admin/ai-settings'],
         ];
     }
     ?>

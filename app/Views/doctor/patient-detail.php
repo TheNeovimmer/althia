@@ -66,11 +66,7 @@
                         <h3>Appointment History</h3>
                     </div>
                     <div class="card-body">
-                        <?php
-                        $db = \App\Core\Database::getInstance();
-                        $appointments = $db->fetchAll("SELECT * FROM appointments WHERE patient_id = ? ORDER BY appointment_date DESC LIMIT 10", [$patient['id']]);
-                        ?>
-                        <?php if (!empty($appointments)): ?>
+                        <?php if (!empty($appointmentHistory)): ?>
                             <table class="data-table data-table-sm">
                                 <thead>
                                     <tr>
@@ -80,7 +76,7 @@
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    <?php foreach ($appointments as $apt): ?>
+                                    <?php foreach ($appointmentHistory as $apt): ?>
                                         <tr>
                                             <td><?= date('M j, Y', strtotime($apt['appointment_date'])) ?></td>
                                             <td><?= date('H:i', strtotime($apt['appointment_time'])) ?></td>

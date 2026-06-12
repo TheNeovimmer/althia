@@ -30,7 +30,7 @@
                                 <th>Time</th>
                                 <th>Patient</th>
                                 <th>Doctor</th>
-                                <th>Type</th>
+                                <th>Specialty</th>
                                 <th>Status</th>
                                 <th>Actions</th>
                             </tr>
@@ -42,7 +42,7 @@
                                     <td><?= date('H:i', strtotime($apt['appointment_time'])) ?></td>
                                     <td><?= htmlspecialchars($apt['patient_first_name'] . ' ' . $apt['patient_last_name']) ?></td>
                                     <td>Dr. <?= htmlspecialchars($apt['doctor_first_name'] . ' ' . $apt['doctor_last_name']) ?></td>
-                                    <td><?= ucfirst($apt['type'] ?? 'in-person') ?></td>
+                                    <td><?= htmlspecialchars($apt['specialization_name'] ?? 'General') ?></td>
                                     <td><span class="apt-status <?= $apt['status'] ?>"><?= ucfirst($apt['status']) ?></span></td>
                                     <td class="actions-cell">
                                         <?php if ($apt['status'] === 'pending'): ?>

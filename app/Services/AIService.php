@@ -125,7 +125,7 @@ class AIService
         ];
     }
 
-    private static function generateResponse(string $message): string
+    public static function generateResponse(string $message): string
     {
         $lowerMsg = strtolower($message);
 

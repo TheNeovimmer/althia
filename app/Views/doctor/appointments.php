@@ -29,8 +29,14 @@
                                 <td><span class="apt-status <?= $apt['status'] ?>"><?= ucfirst($apt['status']) ?></span></td>
                                 <td class="actions-cell">
                                     <?php if ($apt['status'] === 'pending' || $apt['status'] === 'confirmed'): ?>
-                                        <a href="/doctor/appointments/<?= $apt['id'] ?>/complete" class="btn btn-sm btn-success">Complete</a>
-                                        <a href="/doctor/appointments/<?= $apt['id'] ?>/cancel" class="btn btn-sm btn-danger">Cancel</a>
+                                        <form method="POST" action="/doctor/appointments/<?= $apt['id'] ?>/complete" style="display:inline">
+                                            <?= csrf_field() ?>
+                                            <button type="submit" class="btn btn-sm btn-success">Complete</button>
+                                        </form>
+                                        <form method="POST" action="/doctor/appointments/<?= $apt['id'] ?>/cancel" style="display:inline">
+                                            <?= csrf_field() ?>
+                                            <button type="submit" class="btn btn-sm btn-danger">Cancel</button>
+                                        </form>
                                     <?php endif; ?>
                                 </td>
                             </tr>

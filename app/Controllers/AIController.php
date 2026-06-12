@@ -33,6 +33,17 @@ class AIController extends Controller
         }
 
         $result = OpenRouterService::chat($message);
+
+        $isError = isset($result['response']) && (
+            str_contains($result['response'], 'connection issue') ||
+            str_contains($result['response'], 'not configured') ||
+            str_contains($result['response'], 'trouble processing')
+        );
+
+        if ($isError) {
+            $result = ['response' => AIService::generateResponse($message)];
+        }
+
         $this->json($result);
     }
 

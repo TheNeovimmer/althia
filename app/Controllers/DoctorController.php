@@ -91,10 +91,20 @@ class DoctorController extends Controller
         $patient = Patient::getWithUser($id);
         if (!$patient) { $this->redirect('/doctor/patients'); return; }
 
+        $myPatientIds = array_column(Patient::getByDoctorId($doctor['id']), 'id');
+        if (!in_array($patient['id'], $myPatientIds)) {
+            $_SESSION['_flash']['error'] = 'Patient not found.';
+            $this->redirect('/doctor/patients'); return;
+        }
+
         $records = MedicalRecord::getPatientRecordsByDoctor($patient['id'], $doctor['id']);
         $prescriptions = Prescription::getPatientPrescriptions($patient['id']);
+        $appointmentHistory = \App\Core\Database::getInstance()->fetchAll(
+            "SELECT * FROM appointments WHERE patient_id = ? AND doctor_id = ? ORDER BY appointment_date DESC LIMIT 10",
+            [$patient['id'], $doctor['id']]
+        );
 
-        $this->render('doctor/patient-detail', compact('patient', 'doctor', 'records', 'prescriptions'));
+        $this->render('doctor/patient-detail', compact('patient', 'doctor', 'records', 'prescriptions', 'appointmentHistory'));
     }
 
     public function appointments(): void
@@ -110,6 +120,13 @@ class DoctorController extends Controller
     {
         $doctor = $this->getDoctor();
         if (!$doctor) { $this->redirect('/'); return; }
+        if (!$this->isPost()) { $this->redirect('/doctor/appointments'); return; }
+
+        $apt = Appointment::find($id);
+        if (!$apt || $apt['doctor_id'] !== $doctor['id']) {
+            $_SESSION['_flash']['error'] = 'Appointment not found.';
+            $this->redirect('/doctor/appointments'); return;
+        }
 
         AppointmentService::complete($id);
         $_SESSION['_flash']['success'] = 'Appointment marked as completed.';
@@ -120,8 +137,16 @@ class DoctorController extends Controller
     {
         $doctor = $this->getDoctor();
         if (!$doctor) { $this->redirect('/'); return; }
+        if (!$this->isPost()) { $this->redirect('/doctor/appointments'); return; }
 
-        AppointmentService::cancel($id, 'Cancelled by doctor');
+        $body = $this->getBody();
+        $apt = Appointment::find($id);
+        if (!$apt || $apt['doctor_id'] !== $doctor['id']) {
+            $_SESSION['_flash']['error'] = 'Appointment not found.';
+            $this->redirect('/doctor/appointments'); return;
+        }
+
+        AppointmentService::cancel($id, $body['reason'] ?? 'Cancelled by doctor');
         $_SESSION['_flash']['success'] = 'Appointment cancelled.';
         $this->redirect('/doctor/appointments');
     }
@@ -144,7 +169,7 @@ class DoctorController extends Controller
         $this->render('doctor/prescriptions', compact('prescriptions', 'doctor'));
     }
 
-    public function prescriptionsForm(int $patientId = null): void
+    public function prescriptionsForm(?int $patientId = null): void
     {
         $doctor = $this->getDoctor();
         if (!$doctor) { $this->redirect('/'); return; }
@@ -153,7 +178,7 @@ class DoctorController extends Controller
         $this->render('doctor/prescriptions-create', compact('patients', 'doctor', 'patientId'));
     }
 
-    public function recordsForm(int $patientId = null): void
+    public function recordsForm(?int $patientId = null): void
     {
         $doctor = $this->getDoctor();
         if (!$doctor) { $this->redirect('/'); return; }
@@ -168,9 +193,19 @@ class DoctorController extends Controller
         if (!$doctor) { $this->redirect('/'); return; }
 
         $body = $this->getBody();
+        if (!verify_csrf($body['_token'] ?? '')) {
+            $_SESSION['_flash']['error'] = 'Invalid request.';
+            $this->redirect('/doctor/prescriptions/create'); return;
+        }
+
+        $patient = Patient::find($body['patient_id']);
+        if (!$patient || !in_array($patient['id'], array_column(Patient::getByDoctorId($doctor['id']), 'id'))) {
+            $_SESSION['_flash']['error'] = 'Invalid patient.';
+            $this->redirect('/doctor/prescriptions/create'); return;
+        }
 
         $id = Prescription::create([
-            'patient_id' => $body['patient_id'],
+            'patient_id' => $patient['id'],
             'doctor_id' => $doctor['id'],
             'record_id' => $body['record_id'] ?? null,
             'medication_name' => $body['medication_name'],
@@ -183,13 +218,12 @@ class DoctorController extends Controller
             'is_active' => 1,
         ]);
 
-        $patient = Patient::find($body['patient_id']);
-        if ($patient) {
+        if ($id) {
             NotificationService::sendPrescriptionNotification($patient['user_id'], $body['medication_name']);
         }
 
         $_SESSION['_flash']['success'] = 'Prescription created successfully.';
-        $this->redirect('/doctor/patients/' . $body['patient_id']);
+        $this->redirect('/doctor/patients/' . $patient['id']);
     }
 
     public function createReport(): void
@@ -198,9 +232,19 @@ class DoctorController extends Controller
         if (!$doctor) { $this->redirect('/'); return; }
 
         $body = $this->getBody();
+        if (!verify_csrf($body['_token'] ?? '')) {
+            $_SESSION['_flash']['error'] = 'Invalid request.';
+            $this->redirect('/doctor/records/create'); return;
+        }
 
-        $recordId = MedicalRecord::create([
-            'patient_id' => $body['patient_id'],
+        $patient = Patient::find($body['patient_id']);
+        if (!$patient || !in_array($patient['id'], array_column(Patient::getByDoctorId($doctor['id']), 'id'))) {
+            $_SESSION['_flash']['error'] = 'Invalid patient.';
+            $this->redirect('/doctor/records/create'); return;
+        }
+
+        MedicalRecord::create([
+            'patient_id' => $patient['id'],
             'doctor_id' => $doctor['id'],
             'diagnosis' => $body['diagnosis'] ?? '',
             'symptoms' => $body['symptoms'] ?? '',
@@ -209,13 +253,10 @@ class DoctorController extends Controller
             'is_private' => !empty($body['is_private']) ? 1 : 0,
         ]);
 
-        $patient = Patient::find($body['patient_id']);
-        if ($patient) {
-            NotificationService::send($patient['user_id'], 'medical_record', 'New Medical Record', 'A new medical record has been added by your doctor.', '/patient/records');
-        }
+        NotificationService::send($patient['user_id'], 'medical_record', 'New Medical Record', 'A new medical record has been added by your doctor.', '/patient/records');
 
         $_SESSION['_flash']['success'] = 'Medical record created successfully.';
-        $this->redirect('/doctor/patients/' . $body['patient_id']);
+        $this->redirect('/doctor/patients/' . $patient['id']);
     }
 
     public function profile(): void
@@ -227,7 +268,37 @@ class DoctorController extends Controller
 
         if ($this->isPost()) {
             $body = $this->getBody();
+            if (!verify_csrf($body['_token'] ?? '')) {
+                $_SESSION['_flash']['error'] = 'Invalid request.';
+                $this->redirect('/doctor/profile'); return;
+            }
+
             $db = \App\Core\Database::getInstance();
+            $action = $body['_action'] ?? '';
+
+            if ($action === 'change_password') {
+                if (empty($body['current_password']) || empty($body['new_password'])) {
+                    $_SESSION['_flash']['error'] = 'All password fields are required.';
+                    $this->redirect('/doctor/profile'); return;
+                }
+                if (!Auth::verifyPassword($body['current_password'], $user['password'])) {
+                    $_SESSION['_flash']['error'] = 'Current password is incorrect.';
+                    $this->redirect('/doctor/profile'); return;
+                }
+                if ($body['new_password'] !== ($body['confirm_password'] ?? '')) {
+                    $_SESSION['_flash']['error'] = 'Passwords do not match.';
+                    $this->redirect('/doctor/profile'); return;
+                }
+                if (strlen($body['new_password']) < 6) {
+                    $_SESSION['_flash']['error'] = 'Password must be at least 6 characters.';
+                    $this->redirect('/doctor/profile'); return;
+                }
+                $db->execute("UPDATE users SET password = ? WHERE id = ?",
+                    [Auth::hashPassword($body['new_password']), $user['id']]);
+                $_SESSION['_flash']['success'] = 'Password updated successfully.';
+                $this->redirect('/doctor/profile');
+                return;
+            }
 
             $db->execute(
                 "UPDATE users SET first_name = ?, last_name = ?, email = ?, phone = ? WHERE id = ?",
@@ -255,20 +326,7 @@ class DoctorController extends Controller
                 ]
             );
 
-            if (!empty($body['new_password'])) {
-                if ($body['new_password'] === ($body['confirm_password'] ?? '')) {
-                    $db->execute("UPDATE users SET password = ? WHERE id = ?",
-                        [\App\Core\Auth::hashPassword($body['new_password']), $user['id']]);
-                    $_SESSION['_flash']['success'] = 'Profile and password updated successfully.';
-                } else {
-                    $_SESSION['_errors'] = ['Passwords do not match.'];
-                    $this->redirect('/doctor/profile');
-                    return;
-                }
-            } else {
-                $_SESSION['_flash']['success'] = 'Profile updated successfully.';
-            }
-
+            $_SESSION['_flash']['success'] = 'Profile updated successfully.';
             $this->redirect('/doctor/profile');
             return;
         }
@@ -280,6 +338,9 @@ class DoctorController extends Controller
     public function messages(): void
     {
         $user = Auth::user();
+        $doctor = $this->getDoctor();
+        if (!$doctor) { $this->redirect('/'); return; }
+
         $db = Database::getInstance();
         $conversations = $db->fetchAll("
             SELECT m.*, u.first_name, u.last_name, u.avatar, u.id as partner_id,
@@ -294,42 +355,65 @@ class DoctorController extends Controller
             )
             ORDER BY m.created_at DESC
         ", [$user['id'], $user['id'], $user['id'], $user['id'], $user['id']]);
-        $patients = $db->fetchAll("
-            SELECT p.id as patient_id, u.id as user_id, u.first_name, u.last_name
-            FROM patients p JOIN users u ON p.user_id = u.id
-            WHERE p.id IN (SELECT DISTINCT patient_id FROM appointments WHERE doctor_id = ?)
-            ORDER BY u.first_name
-        ", [$this->getDoctor()['id']]);
+        $patients = $this->getPatients();
         $this->render('doctor/messages', compact('conversations', 'patients'));
     }
 
     public function conversation(int $patientUserId): void
     {
         $user = Auth::user();
+        $doctor = $this->getDoctor();
+        if (!$doctor) { $this->redirect('/'); return; }
+
+        $patientUsers = array_column($this->getPatients(), 'user_id');
+        if (!in_array($patientUserId, $patientUsers)) {
+            $_SESSION['_flash']['error'] = 'Patient not found.';
+            $this->redirect('/doctor/messages'); return;
+        }
+
         $messages = Message::getConversation($user['id'], $patientUserId);
         $db = Database::getInstance();
         $db->execute("UPDATE messages SET is_read = 1 WHERE sender_id = ? AND receiver_id = ?", [$patientUserId, $user['id']]);
         $patientUser = \App\Models\User::find($patientUserId);
-        $patients = $db->fetchAll("
-            SELECT p.id as patient_id, u.id as user_id, u.first_name, u.last_name
-            FROM patients p JOIN users u ON p.user_id = u.id
-            WHERE p.id IN (SELECT DISTINCT patient_id FROM appointments WHERE doctor_id = ?)
-            ORDER BY u.first_name
-        ", [$this->getDoctor()['id']]);
+        $patients = $this->getPatients();
         $this->render('doctor/messages-conversation', compact('messages', 'patientUser', 'patientUserId', 'patients'));
     }
 
     public function sendMessage(): void
     {
         $body = $this->getBody();
+        if (!verify_csrf($body['_token'] ?? '')) {
+            $_SESSION['_flash']['error'] = 'Invalid request.';
+            $this->redirect('/doctor/messages'); return;
+        }
+
+        $receiverId = (int)($body['receiver_id'] ?? 0);
+        $patientUsers = array_column($this->getPatients(), 'user_id');
+        if (!$receiverId || !in_array($receiverId, $patientUsers)) {
+            $_SESSION['_flash']['error'] = 'Invalid recipient.';
+            $this->redirect('/doctor/messages'); return;
+        }
+
         Message::create([
             'sender_id' => Auth::id(),
-            'receiver_id' => $body['receiver_id'],
+            'receiver_id' => $receiverId,
             'subject' => $body['subject'] ?? '',
             'body' => $body['body'],
         ]);
         $_SESSION['_flash']['success'] = 'Message sent.';
-        $this->redirect('/doctor/messages/conversation/' . $body['receiver_id']);
+        $this->redirect('/doctor/messages/conversation/' . $receiverId);
+    }
+
+    private function getPatients(): array
+    {
+        $doctor = $this->getDoctor();
+        if (!$doctor) return [];
+        return \App\Core\Database::getInstance()->fetchAll("
+            SELECT p.id as patient_id, u.id as user_id, u.first_name, u.last_name
+            FROM patients p JOIN users u ON p.user_id = u.id
+            WHERE p.id IN (SELECT DISTINCT patient_id FROM appointments WHERE doctor_id = ?)
+            ORDER BY u.first_name
+        ", [$doctor['id']]);
     }
 
     // --- Doctor Notifications ---
@@ -342,6 +426,11 @@ class DoctorController extends Controller
 
     public function markAllNotificationsRead(): void
     {
+        $body = $this->getBody();
+        if (!verify_csrf($body['_token'] ?? '')) {
+            $_SESSION['_flash']['error'] = 'Invalid request.';
+            $this->redirect('/doctor/notifications'); return;
+        }
         Notification::markAllAsRead(Auth::id());
         $_SESSION['_flash']['success'] = 'All notifications marked as read.';
         $this->redirect('/doctor/notifications');
@@ -361,6 +450,11 @@ class DoctorController extends Controller
     {
         $doctor = $this->getDoctor();
         $body = $this->getBody();
+        if (!verify_csrf($body['_token'] ?? '')) {
+            $_SESSION['_flash']['error'] = 'Invalid request.';
+            $this->redirect('/doctor/availability'); return;
+        }
+
         $selectedDays = $body['days'] ?? [];
         $hoursData = $body['hours'] ?? [];
         Doctor::update($doctor['id'], [
@@ -377,10 +471,19 @@ class DoctorController extends Controller
         if (!$doctor) { $this->redirect('/'); return; }
 
         $body = $this->getBody();
-        $action = $body['action'] ?? '';
+        if (!verify_csrf($body['_token'] ?? '')) {
+            $_SESSION['_flash']['error'] = 'Invalid request.';
+            $this->redirect('/doctor/appointments'); return;
+        }
 
-        if ($action === 'confirm') AppointmentService::confirm($id);
-        elseif ($action === 'complete') AppointmentService::complete($id);
+        $apt = Appointment::find($id);
+        if (!$apt || $apt['doctor_id'] !== $doctor['id']) {
+            $_SESSION['_flash']['error'] = 'Appointment not found.';
+            $this->redirect('/doctor/appointments'); return;
+        }
+
+        $action = $body['action'] ?? '';
+        if ($action === 'complete') AppointmentService::complete($id);
         elseif ($action === 'cancel') AppointmentService::cancel($id, $body['reason'] ?? '');
 
         $_SESSION['_flash']['success'] = 'Appointment updated successfully.';

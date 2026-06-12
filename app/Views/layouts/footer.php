@@ -51,8 +51,9 @@
                     <div class="footer-newsletter">
                         <h4>Be Our Subscribers</h4>
                         <p>Get the latest health tips, wellness insights, and Althia updates delivered straight to your inbox.</p>
-                        <form class="newsletter-form-inline" action="/newsletter" method="POST" onsubmit="event.preventDefault();">
-                            <input type="email" placeholder="Enter your email address" required>
+                        <form class="newsletter-form-inline" action="/newsletter" method="POST">
+                            <?= csrf_field() ?>
+                            <input type="email" name="email" placeholder="Enter your email address" required>
                             <button type="submit">Submit <i class="fas fa-arrow-right"></i></button>
                         </form>
                     </div>

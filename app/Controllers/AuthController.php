@@ -17,6 +17,11 @@ class AuthController extends Controller
     public function login(): void
     {
         $body = $this->getBody();
+        if (!verify_csrf($body['_token'] ?? '')) {
+            $_SESSION['_errors'] = ['Invalid request.'];
+            $this->redirect('/login'); return;
+        }
+
         $validator = new Validator();
 
         if (!$validator->validate($body, [
@@ -51,6 +56,11 @@ class AuthController extends Controller
     public function register(): void
     {
         $body = $this->getBody();
+        if (!verify_csrf($body['_token'] ?? '')) {
+            $_SESSION['_errors'] = ['Invalid request.'];
+            $this->redirect('/register'); return;
+        }
+
         $validator = new Validator();
 
         if (!$validator->validate($body, [
@@ -112,6 +122,11 @@ class AuthController extends Controller
     public function forgotPassword(): void
     {
         $body = $this->getBody();
+        if (!verify_csrf($body['_token'] ?? '')) {
+            $_SESSION['_errors'] = ['Invalid request.'];
+            $this->redirect('/forgot-password'); return;
+        }
+
         $validator = new Validator();
 
         if (!$validator->validate($body, ['email' => 'required|email'])) {

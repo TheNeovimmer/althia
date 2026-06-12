@@ -12,7 +12,7 @@
                             <div class="rx-doctor">
                                 <i class="fas fa-prescription"></i>
                                 <div>
-                                    <strong>Dr. <?= htmlspecialchars($rx['first_name'] . ' ' . $rx['last_name']) ?></strong>
+                                    <strong>Dr. <?= htmlspecialchars(($rx['doctor_first_name'] ?? '') . ' ' . ($rx['doctor_last_name'] ?? '')) ?></strong>
                                     <span>Prescribed: <?= date('M j, Y', strtotime($rx['created_at'])) ?></span>
                                 </div>
                             </div>
@@ -40,10 +40,10 @@
                                 <span class="rx-value"><?= htmlspecialchars($rx['duration'] ?? 'As needed') ?></span>
                             </div>
                         </div>
-                        <?php if ($rx['notes']): ?>
+                        <?php if (!empty($rx['instructions'])): ?>
                             <div class="rx-notes">
-                                <span class="rx-label">Notes</span>
-                                <p><?= htmlspecialchars($rx['notes']) ?></p>
+                                <span class="rx-label">Instructions</span>
+                                <p><?= htmlspecialchars($rx['instructions']) ?></p>
                             </div>
                         <?php endif; ?>
                     </div>

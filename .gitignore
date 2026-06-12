@@ -1,1 +1,6 @@
 .env
+.env.local
+vendor/
+.phpunit.cache/
+public/uploads/
+public/assets/uploads/

@@ -106,8 +106,14 @@
                                             <td><?= htmlspecialchars(truncate($apt['reason'] ?? '', 40)) ?></td>
                                             <td><span class="apt-status <?= $apt['status'] ?>"><?= ucfirst($apt['status']) ?></span></td>
                                             <td class="actions-cell">
-                                                <a href="/doctor/appointments/<?= $apt['id'] ?>/complete" class="btn btn-sm btn-success"><i class="fas fa-check"></i></a>
-                                                <a href="/doctor/appointments/<?= $apt['id'] ?>/cancel" class="btn btn-sm btn-outline" style="color:#dc3545;border-color:#dc3545;"><i class="fas fa-times"></i></a>
+                                                <form method="POST" action="/doctor/appointments/<?= $apt['id'] ?>/complete" style="display:inline">
+                                                    <?= csrf_field() ?>
+                                                    <button type="submit" class="btn btn-sm btn-success"><i class="fas fa-check"></i></button>
+                                                </form>
+                                                <form method="POST" action="/doctor/appointments/<?= $apt['id'] ?>/cancel" style="display:inline">
+                                                    <?= csrf_field() ?>
+                                                    <button type="submit" class="btn btn-sm btn-outline" style="color:#dc3545;border-color:#dc3545;"><i class="fas fa-times"></i></button>
+                                                </form>
                                             </td>
                                         </tr>
                                     <?php endforeach; ?>

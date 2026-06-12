@@ -8,7 +8,8 @@ A full-featured healthcare management platform built with **native PHP MVC**, **
 
 ### 👤 Patient
 - Register & manage profile with avatar upload
-- Book, view, and cancel appointments
+- Book appointments filtered by medical specialty
+- View, and cancel appointments
 - View medical records & download reports
 - Track prescriptions with dosage details
 - AI symptom analysis assistant
@@ -20,20 +21,27 @@ A full-featured healthcare management platform built with **native PHP MVC**, **
 - Create prescriptions and medical reports
 - View appointment history
 - Update professional profile (bio, license, education)
+- Set weekly availability schedule
 
 ### 🛡️ Admin
-- Full system overview with statistics
+- Full system overview with statistics and charts
 - Manage users (activate/deactivate)
-- Create, edit, and manage doctors
-- Monitor appointments across the platform
-- Audit user activity
+- Create, edit, verify, and manage doctors
+- Monitor and approve appointments across the platform
+- Blog management with categories
+- Contact form inbox
+- **Specialization CRUD** (add, rename, update, delete)
+- **AI Chatbot Settings** (OpenRouter API key, model selection)
+- **RAG Knowledge Base** (upload documents the AI references)
 
 ### 🤖 AI Assistant
+- OpenRouter-powered chat with configurable model
+- RAG (Retrieval-Augmented Generation) from knowledge base docs
+- Rule-based fallback when API is unavailable
 - Symptom analysis with condition suggestions
 - Medication explanation (dosage, side effects)
-- Medical report interpretation
 - Drug interaction checker with warnings
-- Smart appointment & medication reminders
+- Admin-configurable system prompt context
 
 ---
 
@@ -47,8 +55,9 @@ A full-featured healthcare management platform built with **native PHP MVC**, **
 | **Icons** | Font Awesome 6 |
 | **Fonts** | Inter (Google Fonts) |
 | **Auth** | bcrypt password hashing, session-based |
+| **AI** | OpenRouter API (multi-model) + rule-based fallback |
 | **Mail** | PHPMailer |
-| **Server** | DDEV / PHP built-in server |
+| **Server** | Apache (Laragon) / Nginx / DDEV |
 
 ---
 
@@ -59,6 +68,7 @@ medicase/
 ├── app/
 │   ├── Controllers/       # Request handlers
 │   │   ├── AdminController.php
+│   │   ├── AIController.php
 │   │   ├── AuthController.php
 │   │   ├── BlogController.php
 │   │   ├── DoctorController.php
@@ -74,18 +84,23 @@ medicase/
 │   │   ├── Validator.php   # Form validation
 │   │   └── helpers.php     # Global helpers
 │   ├── Models/             # Database models
+│   │   ├── RagDocument.php # RAG knowledge base
+│   │   ├── Setting.php     # Key-value settings
+│   │   ├── Specialization.php
+│   │   └── ...etc
 │   ├── Services/           # Business logic
 │   │   ├── AIService.php
 │   │   ├── AppointmentService.php
 │   │   ├── FileService.php
-│   │   └── NotificationService.php
+│   │   ├── NotificationService.php
+│   │   └── OpenRouterService.php
 │   └── Views/              # PHP templates
 │       ├── layouts/        # Header/footer
 │       ├── public/         # Landing pages
 │       ├── auth/           # Login/register
 │       ├── patient/        # Patient dashboards
 │       ├── doctor/         # Doctor dashboards
-│       └── admin/          # Admin dashboards
+│       └── admin/          # Admin dashboards (incl. specializations, ai-settings)
 ├── config/
 │   ├── app.php             # App configuration
 │   └── database.php        # Database settings
@@ -93,140 +108,214 @@ medicase/
 │   └── schema.sql          # Full schema + seed data
 ├── public/
 │   ├── index.php           # Front controller
-│   ├── .htaccess           # URL rewriting
+│   ├── .htaccess           # URL rewriting (Apache)
 │   ├── assets/
 │   │   ├── css/style.css   # Complete stylesheet
 │   │   └── js/main.js      # Client-side scripts
 │   └── uploads/
 │       ├── avatars/        # Profile photos
 │       └── reports/        # Medical documents
-├── docs/superpowers/       # Design & planning docs
+├── .env                    # Environment variables (gitignored)
+├── .env.example            # Environment template
 ├── composer.json
 └── README.md
 ```
 
 ---
 
-## 🚀 Installation
+## 🚀 Installation — Laragon (Windows)
 
 ### Prerequisites
 
-- PHP 8.1+
-- MySQL 8+ or MariaDB
-- Composer
-- DDEV (recommended) OR a web server (Apache/Nginx)
+- [Laragon](https://laragon.org/download/) (includes PHP, MySQL, Apache, Composer)
+- Git
 
-### Option A: DDEV (Recommended)
+### Step-by-Step
+
+#### 1. Install Laragon
+
+Download and run the Laragon installer. Use the **Full** or **Portable** version.
+
+#### 2. Start Laragon Services
+
+Open Laragon → click **"Start All"**. Apache and MySQL should turn green.
+
+#### 3. Clone the Project
+
+Open Laragon's terminal (**Menu → Terminal**) or use Git Bash:
 
 ```bash
-# Clone and enter the project
+cd C:/laragon/www
 git clone <repo-url> medicase
 cd medicase
+```
 
-# Start DDEV
+Or manually download and extract the zip into `C:/laragon/www/medicase`.
+
+#### 4. Install PHP Dependencies
+
+```bash
+composer install
+```
+
+If Composer is not recognized, use Laragon's **Menu → PHP → Composer** or restart the terminal.
+
+#### 5. Configure Environment
+
+Copy the environment template:
+
+```bash
+cp .env.example .env
+```
+
+Or create `.env` manually:
+
+```
+OPENROUTER_API_KEY=sk-or-v1-your-key-here
+```
+
+> Get a free API key at [openrouter.ai/keys](https://openrouter.ai/keys).
+
+#### 6. Create the Database
+
+- Click Laragon's **"Database"** button to open HeidiSQL (or Adminer)
+- Create a new database named `medicase`
+  - **Charset:** `utf8mb4`
+  - **Collation:** `utf8mb4_unicode_ci`
+- Or run in Laragon's terminal:
+  ```bash
+  mysql -u root -e "CREATE DATABASE medicase CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;"
+  ```
+
+#### 7. Import the Schema
+
+```bash
+mysql -u root medicase < database/schema.sql
+```
+
+This creates all tables and seeds default data (admin account, specializations, services).
+
+#### 8. Configure Database Connection
+
+Edit **`config/database.php`**:
+
+```php
+return [
+    'host'     => '127.0.0.1',
+    'port'     => 3306,
+    'dbname'   => 'medicase',
+    'username' => 'root',
+    'password' => '',
+    'charset'  => 'utf8mb4',
+];
+```
+
+Laragon's MySQL has no password by default. Keep `'password' => ''`.
+
+#### 9. Configure App URL
+
+Edit **`config/app.php`**:
+
+```php
+return [
+    'name'  => 'Medicase',
+    'url'   => 'http://medicase.test',
+    'env'   => 'development',
+    'debug' => true,
+];
+```
+
+#### 10. Add the Project URL (Laragon Auto-Virtual-Host)
+
+Laragon automatically serves folders from `C:/laragon/www` as `http://folder-name.test`.
+
+Open your browser and visit:
+
+```
+http://medicase.test
+```
+
+If it doesn't resolve, restart Apache in Laragon or add manually to `C:/Windows/System32/drivers/etc/hosts`:
+
+```
+127.0.0.1  medicase.test
+```
+
+#### 11. Login
+
+| Role      | Email                  | Password   |
+|-----------|------------------------|------------|
+| Admin     | admin@medicase.com     | password   |
+
+- **Admin Dashboard:** http://medicase.test/admin/dashboard
+- **Register a new patient:** http://medicase.test/register
+
+---
+
+### 🛠️ Troubleshooting Laragon
+
+**"403 Forbidden" or "404 Not Found"**
+- Make sure the `.htaccess` file exists in `public/`
+- Enable `mod_rewrite` in Apache: **Laragon Menu → Apache → mod_rewrite**
+
+**"PDO Exception — could not find driver"**
+- Enable `pdo_mysql` extension: **Laragon Menu → PHP → Extensions → php_pdo_mysql**
+
+**Blank white page**
+- Enable error display in `config/app.php`: set `'debug' => true`
+
+**Database connection refused**
+- Make sure MySQL is running (green indicator in Laragon)
+- Check `config/database.php` — Laragon MySQL uses `127.0.0.1:3306` with no password
+
+---
+
+## 🚀 Alternative Installation — DDEV
+
+```bash
+git clone <repo-url> medicase
+cd medicase
 ddev start
-
-# Install PHP dependencies
 ddev composer install
-
-# Import database schema
 ddev mysql < database/schema.sql
-
-# Visit
 open https://medicase.ddev.site
 ```
 
-### Option B: Manual Setup
+---
+
+## 🚀 Alternative Installation — PHP Built-in Server
 
 ```bash
-# Clone and enter the project
 git clone <repo-url> medicase
 cd medicase
-
-# Install PHP dependencies
 composer install
-
-# Create database
 mysql -u root -p -e "CREATE DATABASE medicase CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;"
-
-# Import schema
 mysql -u root -p medicase < database/schema.sql
-
-# Configure database
 # Edit config/database.php with your credentials
-
-# Serve the application
 php -S localhost:8000 -t public
-
-# Visit
-open http://localhost:8000
+# Visit http://localhost:8000
 ```
 
 ---
 
 ## ⚙️ Configuration
 
-### `config/database.php`
+### OpenRouter AI
 
-```php
-return [
-    'host'     => '127.0.0.1',
-    'dbname'   => 'medicase',
-    'username' => 'root',
-    'password' => 'your_password',
-    'charset'  => 'utf8mb4',
-];
+The chatbot uses OpenRouter to query various LLMs. Configure via the **Admin Panel → AI Settings** or via `.env`:
+
+```
+OPENROUTER_API_KEY=sk-or-v1-your-key-here
 ```
 
-### `config/app.php`
+Free models available:
+- `openai/gpt-oss-120b:free` (default)
+- `google/gemini-2.0-flash-001`
+- `meta-llama/llama-3.3-70b-instruct`
 
-```php
-return [
-    'name'  => 'Medicase',
-    'url'   => 'https://your-domain.com',
-    'env'   => 'production',
-    'debug' => false,
-];
-```
+### RAG Knowledge Base
 
----
-
-## 👥 Default Accounts
-
-After importing `schema.sql`, the following accounts are available:
-
-| Role      | Email                  | Password   |
-|-----------|------------------------|------------|
-| Admin     | admin@medicase.com     | password   |
-| Patient   | *(register new)*       | —          |
-| Doctor    | *(register new)*       | —          |
-
----
-
-## 🧩 Database Schema
-
-23 tables with full foreign key relationships:
-
-- **users** — Authentication & profiles
-- **patients** — Patient-specific data (blood type, DOB, emergency contact)
-- **doctors** — Professional info (specialization, license, education)
-- **specializations** — Medical specialties (cardiology, neurology, etc.)
-- **appointments** — Scheduling with status flow (pending → confirmed → completed/cancelled)
-- **prescriptions** — Medication, dosage, frequency, duration
-- **medical_records** — Diagnoses, symptoms, notes
-- **medical_reports** — Uploaded documents (PDF, images)
-- **messages** — Patient-doctor communication
-- **notifications** — System-wide alerts
-- **discussion_groups** — Doctor collaboration
-- **discussion_messages** — Group discussions
-- **second_opinions** — Specialist consultation requests
-- **ai_requests** — AI assistant query log
-- **blog_posts** — Public health articles
-- **services** — Offered medical services
-- **password_resets** — Password recovery
-- **audit_logs** — Activity tracking
-
-Run `database/schema.sql` to create all tables and seed initial data.
+The AI can reference custom documents. Add them in **Admin Panel → AI Settings → Knowledge Base Documents**. When a user asks a question, the AI searches these documents for relevant context before responding.
 
 ---
 
@@ -240,37 +329,58 @@ Run `database/schema.sql` to create all tables and seed initial data.
 | `/experts` | GET | — | Doctor directory |
 | `/blog` | GET | — | Blog index |
 | `/contact` | GET/POST | — | Contact form |
-| `/pricing` | GET | — | Pricing page |
+| `/newsletter` | POST | — | Email subscription |
 | `/login` | GET/POST | Guest | Authentication |
 | `/register` | GET/POST | Guest | Registration |
+| `/forgot-password` | GET/POST | Guest | Password reset |
 | `/patient/*` | * | Patient | Patient dashboard |
 | `/doctor/*` | * | Doctor | Doctor dashboard |
 | `/admin/*` | * | Admin | Administration |
-| `/api/ai/*` | POST | Auth | AI assistant API |
+| `/admin/specializations` | GET/POST | Admin | Specialization CRUD |
+| `/admin/ai-settings` | GET/POST | Admin | AI configuration |
+| `/admin/rag-documents` | POST | Admin | RAG document management |
+| `/api/ai/chat` | POST | Auth | AI chat (authenticated) |
+| `/api/ai/public-chat` | POST | — | AI chat (public widget) |
+| `/api/ai/symptoms` | POST | Auth | Symptom analysis |
 
 ---
 
-## 🎨 Dashboard Layouts
+## 🧩 Database Schema
 
-All three roles feature a **dark sidebar layout** with:
+**26 tables** with full foreign key relationships:
 
-- Fixed sidebar (260px) with role-specific navigation
-- Gradient stat cards with hover animations
-- Data tables with avatar thumbnails
-- Profile pages with avatar upload
-- Fully responsive (sidebar → off-canvas overlay on mobile)
+- **users** — Authentication & profiles
+- **patients** — Patient-specific data (blood type, DOB, emergency contact)
+- **doctors** — Professional info (specialization, license, education)
+- **specializations** — Medical specialties (cardiology, neurology, etc.)
+- **appointments** — Scheduling with status flow (pending → confirmed → completed/cancelled)
+- **prescriptions** — Medication, dosage, frequency, duration
+- **medical_records** — Diagnoses, symptoms, notes
+- **medical_reports** — Uploaded documents (PDF, images)
+- **messages** — Patient-doctor communication
+- **notifications** — System-wide alerts
+- **settings** — Key-value configuration (API keys, model settings)
+- **rag_documents** — AI knowledge base documents
+- **blog_posts** — Public health articles
+- **blog_categories** — Blog taxonomy
+- **services** — Offered medical services
+- **contacts** — Contact form submissions
+- **subscribers** — Newsletter emails
+- **password_resets** — Password recovery
+- **audit_logs** — Activity tracking
 
 ---
 
 ## 🔒 Security
 
-- **CSRF Protection** — Token validation on all forms
+- **CSRF Protection** — Token validation on all POST endpoints
 - **XSS Prevention** — `htmlspecialchars()` on all output
 - **SQL Injection** — PDO prepared statements throughout
 - **Password Hashing** — bcrypt via `password_hash()`
-- **Role Middleware** — Route-level access control
+- **Role Middleware** — Route-level access control (admin/doctor/patient/guest)
 - **File Upload** — Extension & size validation
-- **Session** — Server-side session management
+- **Session** — Server-side session management with `session_regenerate_id()`
+- **IDOR Prevention** — Ownership checks on all role-scoped resources
 
 ---
 
@@ -287,11 +397,11 @@ All three roles feature a **dark sidebar layout** with:
 ## 🔧 Development
 
 ```bash
-# Start dev server
-composer serve
-
-# Or with custom host/port
+# Start PHP built-in server
 php -S 0.0.0.0:8080 -t public
+
+# Or with Composer script (if configured)
+composer serve
 ```
 
 ---
@@ -307,4 +417,5 @@ Proprietary — All rights reserved.
 - [PHPMailer](https://github.com/PHPMailer/PHPMailer) — Email handling
 - [Font Awesome](https://fontawesome.com) — Icon library
 - [Inter](https://rsms.me/inter/) — Typeface
-- [Google Stitch](https://stitch.google) — Design reference
+- [Laragon](https://laragon.org) — Windows development environment
+- [OpenRouter](https://openrouter.ai) — Multi-model AI API

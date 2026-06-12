@@ -54,7 +54,7 @@
             <h3><i class="fas fa-paper-plane"></i> New Message</h3>
             <button class="modal-close" onclick="closeNewMessage()">&times;</button>
         </div>
-        <form method="POST" action="/doctor/messages">
+        <form method="POST" action="/doctor/messages/send">
             <?= csrf_field() ?>
             <div class="form-group">
                 <label class="form-label" for="receiver_id"><i class="fas fa-user"></i> Patient</label>
