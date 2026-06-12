@@ -9,7 +9,7 @@
                 Better care,<br>connected for <span class="text-accent">You</span>
             </h1>
             <p class="hero-desc">
-                Medicase connects patients, hospitals and care teams to deliver a smoother, faster and more human healthcare experience.
+                Althia connects patients, hospitals and care teams to deliver a smoother, faster and more human healthcare experience.
             </p>
             <div class="hero-buttons">
                 <a href="/contact" class="btn btn-primary btn-lg">Book an appointment</a>
@@ -80,17 +80,17 @@
     <div class="container about-grid">
         <div class="about-image">
             <div class="about-image-frame"></div>
-            <img src="https://static.codia.ai/image/2026-06-11/6ss7PNz4Gm.png" alt="About Medicase" loading="lazy">
+            <img src="https://static.codia.ai/image/2026-06-11/6ss7PNz4Gm.png" alt="About Althia" loading="lazy">
         </div>
         <div class="about-content">
-            <span class="section-label">Welcome to Medicase</span>
+            <span class="section-label">Welcome to Althia</span>
             <h2 class="section-title">WHO WE ARE</h2>
             <div class="section-divider"></div>
             <p class="about-text">
-                Transforming Healthcare Through Technology: Medicase is redefining the healthcare experience by bridging the gap between patients and healthcare providers through a modern, secure, and intuitive digital platform.
+                Transforming Healthcare Through Technology: Althia is redefining the healthcare experience by bridging the gap between patients and healthcare providers through a modern, secure, and intuitive digital platform.
             </p>
             <p class="about-text">
-                Building a Smarter Healthcare Ecosystem. From appointment management to seamless communication and personalized care journeys, Medicase empowers every healthcare interaction with simplicity, efficiency, and innovation.
+                Building a Smarter Healthcare Ecosystem. From appointment management to seamless communication and personalized care journeys, Althia empowers every healthcare interaction with simplicity, efficiency, and innovation.
             </p>
             <a href="/about" class="btn btn-outline">
                 Learn More <i class="fas fa-arrow-right"></i>
@@ -157,7 +157,7 @@
                 <div class="chat-header">
                     <div class="chat-avatar">A</div>
                     <div class="chat-info">
-                        <span class="chat-name">Medicase AI Assistant</span>
+                        <span class="chat-name">Althia AI Assistant</span>
                         <span class="chat-status"><i class="fas fa-circle"></i> Online now</span>
                     </div>
                 </div>
@@ -382,6 +382,150 @@
                     </div>
                 </article>
             <?php endif; ?>
+        </div>
+    </div>
+</section>
+
+<!-- FAQ Section -->
+<section class="faq-home-section">
+    <div class="container">
+        <div class="faq-header">
+            <div class="section-badge centered">
+                <span class="badge-pill">Got questions?</span>
+            </div>
+            <h2 class="section-title">Frequently asked questions</h2>
+            <p>Everything you need to know about Althia. Can't find what you're looking for? <a href="/contact" style="color:var(--primary);">Contact us</a>.</p>
+        </div>
+        <div class="faq-accordion">
+            <div class="faq-accordion-item active">
+                <button class="faq-question">
+                    <span>What is Althia and how does it work?</span>
+                    <span class="faq-toggle-icon"><i class="fas fa-plus"></i></span>
+                </button>
+                <div class="faq-answer">
+                    <p>Althia is a comprehensive digital healthcare platform that connects patients with healthcare providers. It allows you to book appointments, consult with doctors, access your medical records, and communicate with your care team — all from one secure platform.</p>
+                </div>
+            </div>
+            <div class="faq-accordion-item">
+                <button class="faq-question">
+                    <span>How do I book an appointment?</span>
+                    <span class="faq-toggle-icon"><i class="fas fa-plus"></i></span>
+                </button>
+                <div class="faq-answer">
+                    <p>Simply create an account, browse available doctors by specialty, select a convenient time slot, and confirm your appointment. You'll receive instant confirmation and reminders via email or SMS.</p>
+                </div>
+            </div>
+            <div class="faq-accordion-item">
+                <button class="faq-question">
+                    <span>Is my medical data secure?</span>
+                    <span class="faq-toggle-icon"><i class="fas fa-plus"></i></span>
+                </button>
+                <div class="faq-answer">
+                    <p>Absolutely. Althia uses enterprise-grade encryption, secure servers, and follows strict data protection regulations including INRDP compliance. Your health information is encrypted both in transit and at rest, and only authorized healthcare providers can access your data.</p>
+                </div>
+            </div>
+            <div class="faq-accordion-item">
+                <button class="faq-question">
+                    <span>How does the AI health assistant work?</span>
+                    <span class="faq-toggle-icon"><i class="fas fa-plus"></i></span>
+                </button>
+                <div class="faq-answer">
+                    <p>Our AI health assistant uses advanced natural language processing to understand your health queries, provide general health information, symptom guidance, medication reminders, and help you navigate the platform. It's available 24/7 and learns from verified medical knowledge bases.</p>
+                </div>
+            </div>
+            <div class="faq-accordion-item">
+                <button class="faq-question">
+                    <span>Can I use Althia on my mobile device?</span>
+                    <span class="faq-toggle-icon"><i class="fas fa-plus"></i></span>
+                </button>
+                <div class="faq-answer">
+                    <p>Yes, Althia is fully responsive and works seamlessly on smartphones, tablets, and desktops. A dedicated mobile app is coming soon for an even better experience.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Testimonials Section -->
+<section class="testimonials-section">
+    <div class="container">
+        <div class="testimonials-header">
+            <div class="section-badge centered">
+                <span class="badge-pill">Testimonials</span>
+            </div>
+            <h2 class="section-title">What our patients say</h2>
+            <p>Hear from people who have transformed their healthcare experience with Althia.</p>
+        </div>
+        <div class="testimonials-grid">
+            <div class="testimonial-card">
+                <div class="testimonial-stars">
+                    <i class="fas fa-star"></i>
+                    <i class="fas fa-star"></i>
+                    <i class="fas fa-star"></i>
+                    <i class="fas fa-star"></i>
+                    <i class="fas fa-star"></i>
+                </div>
+                <p class="testimonial-text">"Althia has completely changed how I manage my healthcare. Booking appointments is so easy, and I love being able to chat with my doctor directly through the platform."</p>
+                <div class="testimonial-author">
+                    <div class="testimonial-avatar">S</div>
+                    <div>
+                        <strong class="testimonial-name">Sarah Johnson</strong>
+                        <span class="testimonial-role">Patient</span>
+                    </div>
+                </div>
+            </div>
+            <div class="testimonial-card">
+                <div class="testimonial-stars">
+                    <i class="fas fa-star"></i>
+                    <i class="fas fa-star"></i>
+                    <i class="fas fa-star"></i>
+                    <i class="fas fa-star"></i>
+                    <i class="fas fa-star"></i>
+                </div>
+                <p class="testimonial-text">"As a busy professional, Althia saves me so much time. The AI assistant helps me with quick questions, and I never miss an appointment thanks to the reminders."</p>
+                <div class="testimonial-author">
+                    <div class="testimonial-avatar">M</div>
+                    <div>
+                        <strong class="testimonial-name">Michael Chen</strong>
+                        <span class="testimonial-role">Patient</span>
+                    </div>
+                </div>
+            </div>
+            <div class="testimonial-card">
+                <div class="testimonial-stars">
+                    <i class="fas fa-star"></i>
+                    <i class="fas fa-star"></i>
+                    <i class="fas fa-star"></i>
+                    <i class="fas fa-star"></i>
+                    <i class="fas fa-star"></i>
+                </div>
+                <p class="testimonial-text">"My entire family uses Althia now. Being able to manage appointments and health records for my kids and parents in one place is incredibly convenient."</p>
+                <div class="testimonial-author">
+                    <div class="testimonial-avatar">A</div>
+                    <div>
+                        <strong class="testimonial-name">Amara Okafor</strong>
+                        <span class="testimonial-role">Patient</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Newsletter Section -->
+<section class="newsletter-section">
+    <div class="container">
+        <div class="newsletter-content">
+            <div class="newsletter-icon">
+                <i class="fas fa-envelope-open-text"></i>
+            </div>
+            <h2>Sign Up For Newsletter</h2>
+            <p>Get the latest health tips, wellness insights, and Althia updates delivered straight to your inbox.</p>
+            <form class="newsletter-form-inline" action="/newsletter" method="POST" onsubmit="event.preventDefault();">
+                <input type="email" placeholder="Enter your email address" required>
+                <button type="submit">Subscribe <i class="fas fa-arrow-right"></i></button>
+            </form>
+            <p class="newsletter-disclaimer">We respect your privacy. Unsubscribe at any time.</p>
         </div>
     </div>
 </section>

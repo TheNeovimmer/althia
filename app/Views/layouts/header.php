@@ -3,11 +3,11 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Medicase - Smart Healthcare Platform</title>
-    <meta name="description" content="Medicase connects patients, hospitals and care teams to deliver a smoother, faster and more humane healthcare experience.">
+    <title>Althia - Smart Healthcare Platform</title>
+    <meta name="description" content="Althia connects patients, hospitals and care teams to deliver a smoother, faster and more humane healthcare experience.">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&family=DM+Sans:wght@700;800&family=Inter:wght@400;500;600;700;800&family=Outfit:wght@400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/chart.js@4.4.7/dist/chart.min.css">
     <link rel="stylesheet" href="<?= asset('css/style.css') ?>">
@@ -68,8 +68,7 @@
 
     <aside class="dashboard-sidebar" id="dashboardSidebar">
         <div class="sidebar-brand">
-            <i class="fas fa-plus-circle"></i>
-            <span>Medicase</span>
+            <img src="<?= asset('images/logo.png') ?>" alt="Althia" height="32">
         </div>
 
         <div class="sidebar-user">
@@ -123,8 +122,7 @@
     <nav class="navbar" id="navbar">
         <div class="container">
             <a href="/" class="navbar-brand">
-                <i class="fas fa-plus-circle" style="font-size:1.5rem;"></i>
-                <span>Medicase</span>
+                <img src="<?= asset('images/logo.png') ?>" alt="Althia" height="40">
             </a>
 
             <div class="navbar-menu" id="navMenu">
@@ -176,7 +174,7 @@
                         </div>
                     </div>
                 <?php else: ?>
-                    <a href="/login" style="font-size:0.9rem;font-weight:500;color:var(--text-dark);">Log in</a>
+                    <a href="/login">Log in</a>
                     <a href="/contact" class="btn btn-primary btn-sm">Book Appointment</a>
                 <?php endif; ?>
             </div>

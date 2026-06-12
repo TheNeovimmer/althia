@@ -224,4 +224,15 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
 
+    /* --- FAQ Accordion --- */
+    document.querySelectorAll('.faq-question').forEach(btn => {
+        btn.addEventListener('click', () => {
+            const item = btn.closest('.faq-accordion-item');
+            const isActive = item.classList.contains('active');
+            const accordion = item.closest('.faq-accordion');
+            accordion.querySelectorAll('.faq-accordion-item').forEach(el => el.classList.remove('active'));
+            if (!isActive) item.classList.add('active');
+        });
+    });
+
 });

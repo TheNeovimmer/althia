@@ -1,7 +1,7 @@
 <section class="page-hero page-hero-sm">
     <div class="container">
         <span class="section-label">Contact Us</span>
-        <h1>Let's connect with <span class="text-accent">Medicase</span></h1>
+        <h1>Let's connect with <span class="text-accent">Althia</span></h1>
         <p>Have a question about our AI health platform, services, appointments or partnerships? Our team is ready to help you.</p>
     </div>
 </section>
@@ -18,7 +18,7 @@
                         <div class="contact-detail-icon"><i class="fas fa-building"></i></div>
                         <div>
                             <span class="contact-label">Office</span>
-                            <span>Medicase Health Center, Medical City</span>
+                            <span>Althia Health Center, Medical City</span>
                         </div>
                     </div>
                     <div class="contact-detail">
@@ -124,7 +124,7 @@
             </div>
             <div class="faq-item">
                 <h4>Do you work with clinics?</h4>
-                <p>Yes, Medicase supports clinics, doctors and healthcare organizations.</p>
+                <p>Yes, Althia supports clinics, doctors and healthcare organizations.</p>
             </div>
         </div>
     </div>

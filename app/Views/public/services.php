@@ -71,7 +71,7 @@
 <section class="cta-section">
     <div class="container cta-content">
         <h2>Ready to Transform Your Healthcare Experience?</h2>
-        <p>Join Medicase today and take control of your health journey.</p>
+        <p>Join Althia today and take control of your health journey.</p>
         <div class="cta-buttons">
             <a href="/register" class="btn btn-primary btn-lg">Get Started Free</a>
             <a href="/contact" class="btn btn-outline btn-lg">Contact Us</a>
