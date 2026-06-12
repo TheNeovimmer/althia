@@ -58,7 +58,7 @@ class Router
                 [$controller, $method] = explode('@', $route['handler']);
                 $controller = 'App\\Controllers\\' . $controller;
                 $instance = new $controller();
-                call_user_func_array([$instance, $method], $params);
+                call_user_func_array([$instance, $method], array_values($params));
                 return;
             }
         }

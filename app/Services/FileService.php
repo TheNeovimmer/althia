@@ -21,7 +21,7 @@ class FileService
             return null;
         }
 
-        $uploadDir = __DIR__ . '/../../public/' . $directory;
+        $uploadDir = __DIR__ . '/../../public/assets/' . $directory;
         if (!is_dir($uploadDir)) {
             mkdir($uploadDir, 0755, true);
         }
@@ -38,7 +38,7 @@ class FileService
 
     public static function delete(string $path): bool
     {
-        $fullPath = __DIR__ . '/../../public/' . $path;
+        $fullPath = __DIR__ . '/../../public/assets/' . $path;
         if (file_exists($fullPath)) {
             return unlink($fullPath);
         }
@@ -47,7 +47,7 @@ class FileService
 
     public static function getFileInfo(string $path): ?array
     {
-        $fullPath = __DIR__ . '/../../public/' . $path;
+        $fullPath = __DIR__ . '/../../public/assets/' . $path;
         if (!file_exists($fullPath)) {
             return null;
         }
