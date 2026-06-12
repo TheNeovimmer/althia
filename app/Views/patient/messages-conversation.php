@@ -1,49 +1,54 @@
 <section class="dashboard-section">
     <div class="container">
-        <div class="dashboard-header" style="border-bottom:none;margin-bottom:0;">
-            <div>
-                <h1><i class="fas fa-comment-dots" style="margin-right:12px;color:var(--primary);"></i>
-                    Conversation with Dr. <?= htmlspecialchars($doctorUser['first_name'] . ' ' . $doctorUser['last_name']) ?>
-                </h1>
-                <p><?= htmlspecialchars($doctorUser['email'] ?? '') ?></p>
+        <div class="conv-head">
+            <a href="/patient/messages" class="conv-back"><i class="fas fa-arrow-left"></i></a>
+            <div class="conv-head-avatar"><?= strtoupper(substr($doctorUser['first_name'] ?? 'U', 0, 1)) ?></div>
+            <div class="conv-head-info">
+                <h2>Dr. <?= htmlspecialchars($doctorUser['first_name'] . ' ' . $doctorUser['last_name']) ?></h2>
+                <span><?= htmlspecialchars($doctorUser['email'] ?? '') ?></span>
             </div>
-            <a href="/patient/messages" class="btn btn-outline btn-sm"><i class="fas fa-arrow-left"></i> Back</a>
         </div>
 
         <?= flash_message() ?>
 
-        <div class="conversation-container" style="display:flex;flex-direction:column;gap:16px;max-height:500px;overflow-y:auto;padding:16px;background:var(--bg-darker);border-radius:12px;margin-bottom:20px;">
+        <div class="conv-thread" id="convThread">
             <?php if (!empty($messages)): ?>
                 <?php foreach ($messages as $msg): ?>
-                    <div class="message-bubble <?= $msg['sender_id'] == Auth::id() ? 'sent' : 'received' ?>" style="max-width:75%;padding:12px 16px;border-radius:12px;align-self:<?= $msg['sender_id'] == Auth::id() ? 'flex-end' : 'flex-start' ?>;background:<?= $msg['sender_id'] == Auth::id() ? 'var(--primary)' : 'var(--bg-card)' ?>;color:<?= $msg['sender_id'] == Auth::id() ? '#fff' : 'var(--text)' ?>;">
+                    <?php $isMine = $msg['sender_id'] == \App\Core\Auth::id(); ?>
+                    <div class="conv-bubble <?= $isMine ? 'bubble-mine' : 'bubble-theirs' ?>">
                         <?php if ($msg['subject']): ?>
-                            <strong style="display:block;margin-bottom:4px;font-size:0.85rem;"><?= htmlspecialchars($msg['subject']) ?></strong>
+                            <div class="bubble-subject"><?= htmlspecialchars($msg['subject']) ?></div>
                         <?php endif; ?>
-                        <p style="margin:0;white-space:pre-wrap;"><?= htmlspecialchars($msg['body']) ?></p>
-                        <small style="display:block;margin-top:6px;opacity:0.7;font-size:0.75rem;"><?= date('M j, H:i', strtotime($msg['created_at'])) ?></small>
+                        <div class="bubble-text"><?= htmlspecialchars($msg['body']) ?></div>
+                        <div class="bubble-time"><?= date('M j, H:i', strtotime($msg['created_at'])) ?></div>
                     </div>
                 <?php endforeach; ?>
             <?php else: ?>
-                <div class="empty-state-enhanced" style="background:transparent;">
+                <div class="empty-state-enhanced">
                     <i class="fas fa-comment-slash"></i>
                     <h3>No messages yet</h3>
-                    <p>Start the conversation below.</p>
+                    <p>Send the first message to start the conversation.</p>
                 </div>
             <?php endif; ?>
         </div>
 
-        <div class="form-card">
+        <div class="conv-reply">
             <form method="POST" action="/patient/messages/send">
                 <?= csrf_field() ?>
                 <input type="hidden" name="receiver_id" value="<?= $doctorUserId ?>">
-                <div class="form-group">
-                    <input type="text" name="subject" placeholder="Subject (optional)" style="width:100%;padding:10px 14px;border:1px solid var(--border);border-radius:8px;">
+                <div class="reply-row">
+                    <input type="text" name="subject" class="reply-subject" placeholder="Subject (optional)">
                 </div>
-                <div class="form-row" style="gap:8px;">
-                    <textarea name="body" rows="3" placeholder="Type your message..." required style="flex:1;padding:10px 14px;border:1px solid var(--border);border-radius:8px;resize:vertical;"></textarea>
-                    <button type="submit" class="btn btn-primary" style="align-self:flex-end;padding:10px 20px;"><i class="fas fa-paper-plane"></i> Send</button>
+                <div class="reply-row">
+                    <textarea name="body" rows="2" class="reply-input" placeholder="Type your message…" required></textarea>
+                    <button type="submit" class="btn btn-primary reply-send"><i class="fas fa-paper-plane"></i></button>
                 </div>
             </form>
         </div>
     </div>
 </section>
+
+<script>
+const thread = document.getElementById('convThread');
+if (thread) thread.scrollTop = thread.scrollHeight;
+</script>
