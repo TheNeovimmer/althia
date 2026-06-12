@@ -235,4 +235,94 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     });
 
+    /* --- AI Chat Widget --- */
+    const chatBtn = document.getElementById('chatWidgetBtn');
+    const chatPanel = document.getElementById('chatWidgetPanel');
+    const chatMessages = document.getElementById('chatMessages');
+    const chatInput = document.getElementById('chatInput');
+    const chatSendBtn = document.getElementById('chatSendBtn');
+
+    if (chatBtn && chatPanel && chatMessages && chatInput && chatSendBtn) {
+        chatBtn.addEventListener('click', () => {
+            const isOpen = chatPanel.style.display === 'flex';
+            chatPanel.style.display = isOpen ? 'none' : 'flex';
+            if (isOpen) {
+                chatBtn.querySelector('.chat-btn-icon').style.display = 'flex';
+                chatBtn.querySelector('.chat-btn-close').style.display = 'none';
+            } else {
+                chatBtn.querySelector('.chat-btn-icon').style.display = 'none';
+                chatBtn.querySelector('.chat-btn-close').style.display = 'flex';
+                chatInput.focus();
+            }
+        });
+
+        const appendMessage = (role, text) => {
+            const welcome = chatMessages.querySelector('.welcome-message');
+            if (welcome) welcome.remove();
+
+            const div = document.createElement('div');
+            div.className = 'message ' + role;
+            if (role === 'assistant') {
+                div.innerHTML = '<p>' + text.replace(/\n/g, '<br>') + '</p>';
+            } else {
+                div.textContent = text;
+            }
+            chatMessages.appendChild(div);
+            chatMessages.scrollTop = chatMessages.scrollHeight;
+        };
+
+        const showTyping = () => {
+            const el = document.createElement('div');
+            el.className = 'typing-indicator';
+            el.id = 'typingIndicator';
+            el.innerHTML = '<span></span><span></span><span></span>';
+            chatMessages.appendChild(el);
+            chatMessages.scrollTop = chatMessages.scrollHeight;
+        };
+
+        const hideTyping = () => {
+            const el = document.getElementById('typingIndicator');
+            if (el) el.remove();
+        };
+
+        const sendMessage = async () => {
+            const text = chatInput.value.trim();
+            if (!text) return;
+
+            chatInput.value = '';
+            chatSendBtn.disabled = true;
+            appendMessage('user', text);
+            showTyping();
+
+            try {
+                const res = await fetch('/api/ai/public-chat', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ message: text }),
+                });
+                const data = await res.json();
+                hideTyping();
+                if (data.response) {
+                    appendMessage('assistant', data.response);
+                } else {
+                    appendMessage('assistant', 'Sorry, I could not process your request. Please try again.');
+                }
+            } catch {
+                hideTyping();
+                appendMessage('assistant', 'Sorry, I encountered a connection issue. Please try again.');
+            } finally {
+                chatSendBtn.disabled = false;
+                chatInput.focus();
+            }
+        };
+
+        chatSendBtn.addEventListener('click', sendMessage);
+        chatInput.addEventListener('keydown', (e) => {
+            if (e.key === 'Enter' && !e.shiftKey) {
+                e.preventDefault();
+                sendMessage();
+            }
+        });
+    }
+
 });

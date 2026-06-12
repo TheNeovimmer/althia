@@ -1,5 +1,8 @@
 <section class="page-hero">
     <div class="container">
+        <div class="hero-badge">
+            <span class="badge-pill">Pricing Plans</span>
+        </div>
         <h1>Pricing Plans</h1>
         <p>Choose the plan that fits your healthcare needs</p>
     </div>
@@ -8,6 +11,9 @@
 <section class="pricing-section">
     <div class="container">
         <div class="pricing-header">
+            <div class="section-badge centered">
+                <span class="badge-pill">Our Price</span>
+            </div>
             <h2 class="section-title">Simple plans for <span class="text-accent">everyone</span></h2>
             <div class="pricing-toggle">
                 <button class="toggle-btn active">Monthly</button>

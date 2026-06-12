@@ -4,6 +4,7 @@ namespace App\Controllers;
 use App\Core\Controller;
 use App\Core\Auth;
 use App\Services\AIService;
+use App\Services\OpenRouterService;
 
 class AIController extends Controller
 {
@@ -18,6 +19,20 @@ class AIController extends Controller
         }
 
         $result = AIService::chat(Auth::id(), $message);
+        $this->json($result);
+    }
+
+    public function publicChat(): void
+    {
+        $body = $this->getBody();
+        $message = $body['message'] ?? '';
+
+        if (empty($message)) {
+            $this->json(['error' => 'Message is required'], 400);
+            return;
+        }
+
+        $result = OpenRouterService::chat($message);
         $this->json($result);
     }
 

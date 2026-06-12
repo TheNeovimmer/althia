@@ -80,6 +80,35 @@
     </footer>
     <?php endif; ?>
 
+    <?php if (!$isDashboardFtr): ?>
+    <!-- AI Chat Widget -->
+    <button class="chat-widget-btn" id="chatWidgetBtn" aria-label="Open AI chat">
+        <i class="fas fa-robot chat-btn-icon"></i>
+        <i class="fas fa-times chat-btn-close"></i>
+    </button>
+
+    <div class="chat-widget-panel" id="chatWidgetPanel">
+        <div class="chat-panel-header">
+            <div class="chat-avatar">A</div>
+            <div>
+                <h4>Althia AI</h4>
+                <p>How can I help you?</p>
+            </div>
+        </div>
+        <div class="chat-panel-messages" id="chatMessages">
+            <div class="welcome-message">
+                <div class="welcome-icon"><i class="fas fa-robot"></i></div>
+                <h4>Hello! I'm Althia AI</h4>
+                <p>Ask me anything about our healthcare services, appointments, or general health questions.</p>
+            </div>
+        </div>
+        <div class="chat-panel-input">
+            <input type="text" id="chatInput" placeholder="Type your message..." autocomplete="off">
+            <button id="chatSendBtn" aria-label="Send message"><i class="fas fa-paper-plane"></i></button>
+        </div>
+    </div>
+    <?php endif; ?>
+
     <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.7/dist/chart.umd.min.js"></script>
     <script src="<?= asset('js/main.js') ?>"></script>
 </body>

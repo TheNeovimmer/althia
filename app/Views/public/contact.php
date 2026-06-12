@@ -1,6 +1,8 @@
 <section class="page-hero page-hero-sm">
     <div class="container">
-        <span class="section-label">Contact Us</span>
+        <div class="hero-badge">
+            <span class="badge-pill">Contact Us</span>
+        </div>
         <h1>Let's connect with <span class="text-accent">Althia</span></h1>
         <p>Have a question about our AI health platform, services, appointments or partnerships? Our team is ready to help you.</p>
     </div>
@@ -56,6 +58,9 @@
             </div>
 
             <div class="contact-form-card">
+                <div class="section-badge" style="margin-bottom:12px;">
+                    <span class="badge-pill">Send Message</span>
+                </div>
                 <h3>Send us a message</h3>
                 <p>Fill the form and our team will contact you shortly.</p>
 
@@ -107,24 +112,51 @@
     </div>
 </section>
 
-<section class="faq-section">
+<section class="faq-home-section">
     <div class="container">
-        <div class="section-badge centered">
-            <span class="badge-pill">FAQ</span>
+        <div class="faq-header">
+            <div class="section-badge centered">
+                <span class="badge-pill">FAQ</span>
+            </div>
+            <h2 class="section-title">Any questions?</h2>
+            <p>Everything you need to know about Althia. Can't find what you're looking for? <a href="/contact" style="color:var(--primary);">Contact us</a>.</p>
         </div>
-        <h2 class="section-title centered">Any questions?</h2>
-        <div class="faq-grid">
-            <div class="faq-item">
-                <h4>Can I book an appointment online?</h4>
-                <p>Yes, you can contact us or use the appointment system to plan your consultation.</p>
+        <div class="faq-accordion">
+            <div class="faq-accordion-item active">
+                <button class="faq-question">
+                    <span>How quickly do you respond to messages?</span>
+                    <span class="faq-toggle-icon"><i class="fas fa-plus"></i></span>
+                </button>
+                <div class="faq-answer">
+                    <p>We typically respond within 24 hours during business days. Urgent inquiries are prioritized, and our AI assistant is available 24/7 for immediate assistance.</p>
+                </div>
             </div>
-            <div class="faq-item">
-                <h4>Is the AI assistant available 24/7?</h4>
-                <p>Yes, the AI assistant can guide users at any time for basic orientation.</p>
+            <div class="faq-accordion-item">
+                <button class="faq-question">
+                    <span>Can I book an appointment by phone?</span>
+                    <span class="faq-toggle-icon"><i class="fas fa-plus"></i></span>
+                </button>
+                <div class="faq-answer">
+                    <p>Yes, you can call us during working hours to book an appointment. You can also book online through our platform anytime.</p>
+                </div>
             </div>
-            <div class="faq-item">
-                <h4>Do you work with clinics?</h4>
-                <p>Yes, Althia supports clinics, doctors and healthcare organizations.</p>
+            <div class="faq-accordion-item">
+                <button class="faq-question">
+                    <span>Do you offer partnership opportunities?</span>
+                    <span class="faq-toggle-icon"><i class="fas fa-plus"></i></span>
+                </button>
+                <div class="faq-answer">
+                    <p>Yes, we welcome partnerships with clinics, hospitals, insurance companies, and healthcare technology providers.</p>
+                </div>
+            </div>
+            <div class="faq-accordion-item">
+                <button class="faq-question">
+                    <span>Where are you located?</span>
+                    <span class="faq-toggle-icon"><i class="fas fa-plus"></i></span>
+                </button>
+                <div class="faq-answer">
+                    <p>Our main office is located at Althia Health Center, Medical City. We also offer fully virtual consultations through our platform.</p>
+                </div>
             </div>
         </div>
     </div>
@@ -132,9 +164,11 @@
 
 <section class="map-section">
     <div class="container">
+        <div class="section-badge centered" style="margin-bottom:16px;">
+            <span class="badge-pill">Our Location</span>
+        </div>
         <div class="map-card">
-            <h4>Our Location</h4>
-            <p>Visit our healthcare innovation center.</p>
+            <h4>Visit our healthcare innovation center</h4>
             <p>Our team welcomes patients, doctors and healthcare partners in a clean, secure and modern environment.</p>
         </div>
         <div class="map-placeholder">

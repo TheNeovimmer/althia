@@ -111,6 +111,7 @@ $router->post('/patient/reports/upload', 'PatientController@uploadReport', [Midd
 
 // AI routes
 $router->post('/api/ai/chat', 'AIController@chat', [Middleware::auth()]);
+$router->post('/api/ai/public-chat', 'AIController@publicChat');
 $router->post('/api/ai/symptoms', 'AIController@analyzeSymptoms', [Middleware::auth()]);
 
 // 404 route
