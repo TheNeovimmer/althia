@@ -187,15 +187,31 @@ OPENROUTER_API_KEY=sk-or-v1-your-key-here
   mysql -u root -e "CREATE DATABASE medicase CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;"
   ```
 
-#### 7. Import the Schema
+#### 7. Import the Schema (Tables)
 
 ```bash
 mysql -u root medicase < database/schema.sql
 ```
 
-This creates all tables and seeds default data (admin account, specializations, services).
+This creates all 26 tables. The same file also **seeds** the database with default data.
 
-#### 8. Configure Database Connection
+#### 8. Seed the Database (Default Data)
+
+If you ran step 7, the seed data is already inserted. To re-seed later (resets everything):
+
+```bash
+mysql -u root medicase < database/schema.sql
+```
+
+**What gets seeded:**
+
+| Data | Details |
+|------|---------|
+| **Admin account** | `admin@medicase.com` / `password` |
+| **Specializations** | Cardiology, Neurology, Pediatrics, Orthopedics, Dermatology, Ophthalmology, Psychiatry, General Practice |
+| **Services** | Easy Appointments, Care Coordination, AI Health Assistant, Health Records |
+
+#### 9. Configure Database Connection
 
 Edit **`config/database.php`**:
 
@@ -212,7 +228,7 @@ return [
 
 Laragon's MySQL has no password by default. Keep `'password' => ''`.
 
-#### 9. Configure App URL
+#### 10. Configure App URL
 
 Edit **`config/app.php`**:
 
@@ -225,7 +241,7 @@ return [
 ];
 ```
 
-#### 10. Add the Project URL (Laragon Auto-Virtual-Host)
+#### 11. Add the Project URL (Laragon Auto-Virtual-Host)
 
 Laragon automatically serves folders from `C:/laragon/www` as `http://folder-name.test`.
 
@@ -241,7 +257,7 @@ If it doesn't resolve, restart Apache in Laragon or add manually to `C:/Windows/
 127.0.0.1  medicase.test
 ```
 
-#### 11. Login
+#### 12. Login
 
 | Role      | Email                  | Password   |
 |-----------|------------------------|------------|
