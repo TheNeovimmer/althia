@@ -193,23 +193,31 @@ OPENROUTER_API_KEY=sk-or-v1-your-key-here
 mysql -u root medicase < database/schema.sql
 ```
 
-This creates all 26 tables. The same file also **seeds** the database with default data.
+This creates all 26 tables and inserts base data (admin account, specializations, services).
 
-#### 8. Seed the Database (Default Data)
+#### 8. Seed Demo Data (Rich Sample Data)
 
-If you ran step 7, the seed data is already inserted. To re-seed later (resets everything):
+Run the PHP seeder to populate patients, doctors, appointments, records, and more:
 
 ```bash
-mysql -u root medicase < database/schema.sql
+php database/seed.php
 ```
+
+> Requires `composer install` to have been run first.
 
 **What gets seeded:**
 
 | Data | Details |
 |------|---------|
 | **Admin account** | `admin@medicase.com` / `password` |
-| **Specializations** | Cardiology, Neurology, Pediatrics, Orthopedics, Dermatology, Ophthalmology, Psychiatry, General Practice |
-| **Services** | Easy Appointments, Care Coordination, AI Health Assistant, Health Records |
+| **Doctors** (4) | Ahmed Hassan (Cardiology), Maria Santos (Neurology), Pierre Dubois (Pediatrics), Wei Li (Orthopedics) — all password `password` |
+| **Patients** (5) | Sarah Johnson, Mike Chen, Emma Davis, James Wilson, Olivia Brown — all password `password` |
+| **Specializations** (8) | Cardiology, Neurology, Pediatrics, Orthopedics, Dermatology, Ophthalmology, Psychiatry, General Medicine |
+| **Appointments** (25) | Mixed statuses (pending, confirmed, completed, cancelled) across patients and doctors |
+| **Medical Records** (20) | Diagnoses, symptoms, and notes per patient |
+| **Prescriptions** (15) | Medications, dosages, and instructions per patient |
+| **Notifications** (15) | Sample in-app notifications for users |
+| **Services** (4) | Easy Appointments, Care Coordination, AI Health Assistant, Health Records |
 
 #### 9. Configure Database Connection
 
